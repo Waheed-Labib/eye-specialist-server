@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = process.env.port || 5000;
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 require('dotenv').config();
 
 app.use(cors())
@@ -17,6 +17,7 @@ async function run() {
         const database = client.db("drBean");
         const servicesCollection = database.collection("services");
 
+        // read all services from database
         app.get('/services', async (req, res) => {
 
             const limit = req.query.limit;
@@ -28,6 +29,17 @@ async function run() {
             res.send(result)
         })
 
+        // read particular service from database
+        app.get('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            const serviceId = new ObjectId(id);
+
+            const query = { _id: serviceId };
+            const result = await servicesCollection.findOne(query);
+            res.send(result);
+        })
+
+        // create new service on database
         app.post('/services', async (req, res) => {
             const service = req.body;
             const result = await servicesCollection.insertOne(service);
@@ -44,10 +56,6 @@ run().catch(console.dir);
 
 app.get('/', (req, res) => {
     res.send('Eye Specialist Server runing');
-})
-
-app.get('/services', (req, res) => {
-    res.send(services)
 })
 
 app.listen(port, () => {
