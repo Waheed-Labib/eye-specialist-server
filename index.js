@@ -16,6 +16,7 @@ async function run() {
     try {
         const database = client.db("drBean");
         const servicesCollection = database.collection("services");
+        const reviewsCollection = database.collection('reviews');
 
         // read all services from database
         app.get('/services', async (req, res) => {
@@ -44,6 +45,44 @@ async function run() {
             const service = req.body;
             const result = await servicesCollection.insertOne(service);
             res.send(result);
+        })
+
+        // read all reviews from database
+        app.get('/reviews', async (req, res) => {
+
+            const cursor = reviewsCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        // create review on database
+        app.post('/reviews', async (req, res) => {
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
+            res.send(result);
+        })
+
+        // update rating on particular service details
+        app.put('/services/:id', async (req, res) => {
+            const service = req.body;
+
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+
+            const options = { upsert: true }
+            const updatedService = {
+                $set: {
+                    name: service.name,
+                    price: service.price,
+                    description: service.description,
+                    image: service.image,
+                    rating: service.rating,
+                    ratingCount: service.ratingCount
+                }
+            }
+
+            const result = await servicesCollection.updateOne(filter, updatedService, options)
+            res.send(result)
         })
 
     } finally {
