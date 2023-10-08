@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.json())
 
 // mongodb configuration 
-const uri = process.env.mongodb_uri;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nbmbmyw.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri);
 
 async function run() {
@@ -59,6 +59,16 @@ async function run() {
         app.post('/reviews', async (req, res) => {
             const review = req.body;
             const result = await reviewsCollection.insertOne(review);
+            res.send(result);
+        })
+
+        // get reviews for particular service
+        app.get('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { serviceId: id };
+
+            const cursor = reviewsCollection.find(query);
+            const result = await cursor.toArray();
             res.send(result);
         })
 
