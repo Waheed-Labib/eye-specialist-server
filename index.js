@@ -96,7 +96,7 @@ async function run() {
         })
 
         // read reviews added by a particular user
-        app.get('/reviews/:id', async (req, res) => {
+        app.get('/user-reviews/:id', async (req, res) => {
             const id = req.params.id;
             const query = { userId: id };
 
