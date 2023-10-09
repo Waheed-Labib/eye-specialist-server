@@ -95,6 +95,17 @@ async function run() {
             res.send(result)
         })
 
+        // read reviews added by a particular user
+        app.get('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { userId: id };
+
+            const cursor = reviewsCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+
     } finally {
 
     }
