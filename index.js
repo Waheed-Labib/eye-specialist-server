@@ -105,6 +105,31 @@ async function run() {
             res.send(result);
         })
 
+        // update particular review
+
+        app.put('/reviews/:id', async (req, res) => {
+
+            const review = req.body;
+
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+
+            const options = { upsert: true };
+            const updatedReview = {
+                $set: {
+                    userId: review.userId,
+                    userName: review.userName,
+                    userImage: review.userImage,
+                    serviceId: review.serviceId,
+                    serviceName: review.serviceName,
+                    rating: review.rating,
+                    review: review.review,
+                }
+            }
+
+            const result = await reviewsCollection.updateOne(filter, updatedReview, options);
+            res.send(result);
+        })
 
     } finally {
 
