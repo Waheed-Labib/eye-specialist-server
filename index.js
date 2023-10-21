@@ -21,12 +21,14 @@ async function run() {
         // read all services from database
         app.get('/services', async (req, res) => {
 
-            const limit = req.query.limit;
+            const limit = parseInt(req.query.limit);
 
             const cursor = servicesCollection.find({});
-            let result = await cursor.toArray();
+            let result;
 
-            if (limit) result = result.splice(0, limit);
+            if (limit) result = await cursor.limit(limit).toArray();
+            if (!limit) result = await cursor.toArray();
+
             res.send(result)
         })
 
