@@ -27,9 +27,10 @@ async function run() {
             const query = {};
             const cursor = servicesCollection.find(query);
 
-            const result = await cursor.skip(page * size).limit(size).toArray();
+            const count = await servicesCollection.estimatedDocumentCount();
+            const services = await cursor.skip(page * size).limit(size).toArray();
 
-            res.send(result)
+            res.send({ count, services });
         })
 
         // read particular service from database
