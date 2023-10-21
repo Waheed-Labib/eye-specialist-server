@@ -21,13 +21,13 @@ async function run() {
         // read all services from database
         app.get('/services', async (req, res) => {
 
-            const limit = parseInt(req.query.limit);
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
 
-            const cursor = servicesCollection.find({});
-            let result;
+            const query = {};
+            const cursor = servicesCollection.find(query);
 
-            if (limit) result = await cursor.limit(limit).toArray();
-            if (!limit) result = await cursor.toArray();
+            const result = await cursor.skip(page * size).limit(size).toArray();
 
             res.send(result)
         })
