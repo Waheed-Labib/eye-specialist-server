@@ -97,7 +97,9 @@ async function run() {
             const query = { serviceId: id };
 
             const cursor = reviewsCollection.find(query);
-            const result = await cursor.toArray();
+
+            // the array is reversed to send the newest review first
+            const result = (await cursor.toArray()).slice().reverse();
             res.send(result);
         })
 
@@ -136,7 +138,9 @@ async function run() {
             const query = { userId: id };
 
             const cursor = reviewsCollection.find(query);
-            const result = await cursor.toArray();
+
+            // the array is reversed to send the newest review first
+            const result = await cursor.toArray().slice().reverse();
             res.send(result);
         })
 
