@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+var jwt = require('jsonwebtoken');
 const app = express();
 const port = process.env.port || 5000;
 const { MongoClient, ObjectId } = require("mongodb");
@@ -12,11 +13,34 @@ app.use(express.json())
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nbmbmyw.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri);
 
+const verifyJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader)
+        return res.status(401).send({ message: 'Unauthorized Access.' })
+
+
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) return res.status(401).send({ message: 'Unauthorized Access' })
+
+        req.decoded = decoded;
+        next();
+    })
+}
+
 async function run() {
     try {
         const database = client.db("drBean");
         const servicesCollection = database.collection("services");
         const reviewsCollection = database.collection('reviews');
+
+        // jwt
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
+            res.send({ token })
+        })
 
         // read all services from database
         app.get('/services', async (req, res) => {
@@ -45,6 +69,7 @@ async function run() {
 
         // create new service on database
         app.post('/services', async (req, res) => {
+
             const service = req.body;
             const result = await servicesCollection.insertOne(service);
             res.send(result);
@@ -60,6 +85,7 @@ async function run() {
 
         // create review on database
         app.post('/reviews', async (req, res) => {
+
             const review = req.body;
             const result = await reviewsCollection.insertOne(review);
             res.send(result);
@@ -99,7 +125,13 @@ async function run() {
         })
 
         // read reviews added by a particular user
-        app.get('/user-reviews/:id', async (req, res) => {
+        app.get('/user-reviews/:id', verifyJWT, async (req, res) => {
+
+            const decoded = req.decoded;
+            if (decoded.uid !== req.params.id) {
+                return res.status(403).send('Forbidden Access')
+            }
+
             const id = req.params.id;
             const query = { userId: id };
 
@@ -161,3 +193,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log('Eye Specialist Server running on port', port);
 })
+
+
