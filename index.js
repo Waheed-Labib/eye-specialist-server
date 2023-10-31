@@ -117,10 +117,6 @@ async function run() {
             const options = { upsert: true }
             const updatedService = {
                 $set: {
-                    name: service.name,
-                    price: service.price,
-                    description: service.description,
-                    image: service.image,
                     rating: service.rating,
                     ratingCount: service.ratingCount
                 }
@@ -163,11 +159,6 @@ async function run() {
             const options = { upsert: true };
             const updatedReview = {
                 $set: {
-                    userId: review.userId,
-                    userName: review.userName,
-                    userImage: review.userImage,
-                    serviceId: review.serviceId,
-                    serviceName: review.serviceName,
                     rating: review.rating,
                     review: review.review,
                 }
