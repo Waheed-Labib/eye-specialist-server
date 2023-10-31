@@ -29,6 +29,7 @@ const verifyJWT = (req, res, next) => {
     })
 }
 
+
 async function run() {
     try {
         const database = client.db("drBean");
@@ -93,9 +94,9 @@ async function run() {
 
         // get reviews for particular service
         app.get('/reviews/:id', async (req, res) => {
+
             const id = req.params.id;
             const query = { serviceId: id };
-
             const cursor = reviewsCollection.find(query);
 
             let result = await cursor.toArray();
