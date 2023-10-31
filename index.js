@@ -98,9 +98,12 @@ async function run() {
 
             const cursor = reviewsCollection.find(query);
 
+            let result = await cursor.toArray();
+
             // the array is reversed to send the newest review first
-            const result = (await cursor.toArray()).slice().reverse();
-            res.send(result);
+            result = result.slice().reverse();
+
+            res.send(result)
         })
 
         // update rating on particular service details
@@ -139,8 +142,11 @@ async function run() {
 
             const cursor = reviewsCollection.find(query);
 
+            let result = await cursor.toArray();
+
             // the array is reversed to send the newest review first
-            const result = await cursor.toArray().slice().reverse();
+            result = result.slice().reverse();
+
             res.send(result);
         })
 
