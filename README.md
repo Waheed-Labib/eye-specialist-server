@@ -1,4 +1,4 @@
-<h3>Server Side For : https://eye-specialist-client.web.app/</h3>
+<h2>This is the Server-side for : https://eye-specialist-client.web.app/</h2>
 
 <h1>Some Features</h1>
 <ol>
@@ -19,4 +19,4 @@
   <li><h3>Environment Variables</h3></li>
 </ol>
 
-<h3>Client Side Repo : https://github.com/Waheed-Labib/eye-specialist-client</h3>
+<h2>Client Side Repo : https://github.com/Waheed-Labib/eye-specialist-client</h2>
